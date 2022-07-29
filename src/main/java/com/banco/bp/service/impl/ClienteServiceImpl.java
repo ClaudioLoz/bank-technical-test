@@ -11,7 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
@@ -48,21 +51,28 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public ClienteDTO saveCliente(ClienteDTO clienteDTO) {
-//        Cliente cliente = clienteRepository.findByIdentificacion(clienteDTO.getIdentificacion());
-//        if(!cliente) return "El identificador ya lo tiene otro cliente, los clientes deben tenerlos únicos";
-        Cliente cliente = clienteMapper.clienteDTOToCliente(clienteDTO);
-        cliente.setEstado(true);
+        Cliente cliente = clienteRepository.findByIdentificacion(clienteDTO.getIdentificacion());
+        if(cliente!=null){
+            try {
+                throw new SQLIntegrityConstraintViolationException("El identificador ya lo tiene otro cliente, los clientes deben tenerlos únicos");
+            } catch (SQLIntegrityConstraintViolationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        Cliente convertedCliente = clienteMapper.clienteDTOToCliente(clienteDTO);
+        convertedCliente.setEstado(true);
         log.info("Se está guardando el cliente");
 
-        Cliente savedCliente = clienteRepository.save(cliente);
+        Cliente savedCliente = clienteRepository.save(convertedCliente);
         ClienteDTO returnDto = clienteMapper.clienteToClienteDTO(savedCliente);
         return returnDto;
     }
 
     @Override
     public void deleteClienteById(Long id) {
-        Cliente cliente  = clienteRepository.findById(id).orElse(null);
-        if(cliente==null)throw new RuntimeException("El cliente con id + " + id+ " no existe");
+        Cliente cliente  = clienteRepository.findById(id).orElseThrow(()-> {
+            throw new NoSuchElementException("El cliente con id " + id+ " no existe");
+        });
 
         log.info("Se está eliminando (lógico) el cliente con ID {}, sus cuentas y movimientos", id);
         cliente.setEstado(false);

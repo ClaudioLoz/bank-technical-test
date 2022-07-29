@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
@@ -62,13 +63,19 @@ public class MovimientoServiceImpl implements MovimientoService {
         if(movimiento.getTipoMovimiento() == TipoMovimiento.DEPOSITO){
             newSaldo+=movimiento.getValor();
         }else if(movimiento.getTipoMovimiento() == TipoMovimiento.RETIRO){
-            if(newSaldo==0 || movimiento.getValor()>newSaldo) log.warn("Saldo no disponible"); //TODO:Exception
+            if(newSaldo==0 || movimiento.getValor()>newSaldo) {
+                log.warn("Saldo no disponible");
+                throw new RuntimeException("Saldo no disponible");
+            }
             Double totalDayWithdrawal = movimientoRepository
                     .findByCuentaAndFechaAndTipoMovimiento(cuenta,new Date(new java.util.Date().getTime()),TipoMovimiento.RETIRO)
                     .stream().map(m->m.getValor()).collect(Collectors.toList())
                     .stream().reduce((double) 0,Double::sum);
             log.info("El monto de retiros en el dia de hoy es igual a {}$ para la cuenta con ID {} ",totalDayWithdrawal,movimientoDTO.getCuentaId());
-            if(limitDailyWithdrawal - (totalDayWithdrawal+ movimiento.getValor())<0) log.warn("Cupo diario excedido");  //TODO:Exception
+            if(limitDailyWithdrawal - (totalDayWithdrawal+ movimiento.getValor())<0){
+                log.warn("Cupo diario excedido (lleva retirando : {})",totalDayWithdrawal);
+                throw new RuntimeException("Cupo diario excedido");
+            }
             newSaldo-=movimiento.getValor();
         }
         movimiento.setSaldoDisponible(newSaldo);
@@ -83,8 +90,9 @@ public class MovimientoServiceImpl implements MovimientoService {
     @Override
     public void deleteMovimientoById(Long id) {
 
-        Movimiento movimientoToDelete = movimientoRepository.findById(id).orElse(null);
-        if(movimientoToDelete==null)throw new RuntimeException("El movimiento con id + " + id+ " no existe");
+        Movimiento movimientoToDelete = movimientoRepository.findById(id).orElseThrow(()-> {
+            throw new NoSuchElementException("El movimiento con id " + id+ " no existe");
+        });
         log.info("Se está eliminando (físico) el movimiento con ID {}", id);
         Cuenta cuenta =  movimientoToDelete.getCuenta();
         if ( movimientoToDelete.getTipoMovimiento() == TipoMovimiento.DEPOSITO)

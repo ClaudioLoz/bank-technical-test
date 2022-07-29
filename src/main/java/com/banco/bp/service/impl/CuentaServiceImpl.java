@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
@@ -66,8 +67,9 @@ public class CuentaServiceImpl implements CuentaService {
 
     @Override
     public void deleteCuentaById(Long id) {
-        Cuenta cuenta  = cuentaRepository.findById(id).orElse(null);
-        if(cuenta==null)throw new RuntimeException("La cuenta con id + " + id+ " no existe");
+        Cuenta cuenta  = cuentaRepository.findById(id).orElseThrow(()-> {
+            throw new NoSuchElementException("La cuenta con id " + id+ " no existe");
+        });
 
         log.info("Se está eliminando (lógico) la cuenta con ID {}", id);
         cuenta.setEstado(false);

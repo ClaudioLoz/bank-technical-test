@@ -21,10 +21,10 @@ public class ClienteController {
                 new ClienteListDTO(clienteService.findActuallyAllClientes()), HttpStatus.OK);
     }
 
-    @GetMapping("/{nombre}")
-    public ResponseEntity<ClienteDTO>findClienteByName(@PathVariable String nombre){
-        return new ResponseEntity<ClienteDTO>(clienteService.findClienteByNombre(nombre), HttpStatus.OK);
-    }
+//    @GetMapping("/{nombre}")
+//    public ResponseEntity<ClienteDTO>findClienteByName(@PathVariable String nombre){
+//        return new ResponseEntity<ClienteDTO>(clienteService.findClienteByNombre(nombre), HttpStatus.OK);
+//    }
     @GetMapping
     public ResponseEntity<ClienteListDTO>findAllClientes(){
         return new ResponseEntity<ClienteListDTO>(
