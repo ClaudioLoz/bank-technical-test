@@ -4,18 +4,16 @@ package com.banco.bp.controller;
 import com.banco.bp.dto.ClienteDTO;
 import com.banco.bp.dto.response.ClienteListDTO;
 import com.banco.bp.service.ClienteService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
     private final ClienteService clienteService;
 
-    public ClienteController(ClienteService clienteService) {
-        this.clienteService = clienteService;
-    }
 
     @GetMapping("/auditoria")
     public ResponseEntity<ClienteListDTO>findActuallyAllClientes(){

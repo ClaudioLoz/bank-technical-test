@@ -5,19 +5,16 @@ import com.banco.bp.dto.CuentaDTO;
 import com.banco.bp.dto.response.ClienteListDTO;
 import com.banco.bp.dto.response.CuentaListDTO;
 import com.banco.bp.service.CuentaService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/cuentas")
 public class CuentaController {
     private final CuentaService cuentaService;
-
-
-    public CuentaController(CuentaService cuentaService) {
-        this.cuentaService = cuentaService;
-    }
 
     @GetMapping("/auditoria")
     public ResponseEntity<CuentaListDTO> findActuallyAllCuentas(){

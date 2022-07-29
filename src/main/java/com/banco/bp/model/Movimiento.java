@@ -34,4 +34,8 @@ public class Movimiento {
     @Column(name = "saldo_disponible")
     private Double saldoDisponible;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "cuenta_id", nullable = false)
+    private Cuenta cuenta;
+
 }

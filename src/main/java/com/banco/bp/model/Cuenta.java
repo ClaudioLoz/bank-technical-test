@@ -20,7 +20,7 @@ public class Cuenta {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "numero_cuenta", nullable = false)
+    @Column(name = "numero_cuenta", nullable = false,unique = true)
     private String numeroCuenta;
 
     @Enumerated(EnumType.STRING)
@@ -32,5 +32,9 @@ public class Cuenta {
 
     @Column(name = "estado", nullable = false)
     private Boolean estado;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
 
 }
