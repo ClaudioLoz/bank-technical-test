@@ -47,8 +47,6 @@ public class CuentaController {
         return new ResponseEntity<CuentaDTO>(cuentaService.patchCuenta(id,cuentaDTO), HttpStatus.OK);
     }
 
-
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void>deleteCuentaById(@PathVariable Long id){
         cuentaService.deleteCuentaById(id);
