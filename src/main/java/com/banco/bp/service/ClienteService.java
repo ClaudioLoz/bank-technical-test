@@ -12,6 +12,9 @@ public interface ClienteService {
     ClienteDTO findClienteByNombre(String nombre);
 
     ClienteDTO saveCliente(ClienteDTO clienteDTO);
+    ClienteDTO updateCliente(Long id,ClienteDTO clienteDTO);
+    ClienteDTO patchCliente(Long id, ClienteDTO clienteDTO);
 
     void deleteClienteById(Long id);
+
 }

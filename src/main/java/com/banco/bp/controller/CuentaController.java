@@ -38,6 +38,17 @@ public class CuentaController {
         return new ResponseEntity<CuentaDTO>(cuentaService.saveCuenta(cuentaDTO), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<CuentaDTO>updateCuenta(@PathVariable Long id,@RequestBody CuentaDTO cuentaDTO){
+        return new ResponseEntity<CuentaDTO>(cuentaService.updateCuenta(id,cuentaDTO), HttpStatus.OK);
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<CuentaDTO>patchCuenta(@PathVariable Long id,@RequestBody CuentaDTO cuentaDTO){
+        return new ResponseEntity<CuentaDTO>(cuentaService.patchCuenta(id,cuentaDTO), HttpStatus.OK);
+    }
+
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void>deleteCuentaById(@PathVariable Long id){
         cuentaService.deleteCuentaById(id);

@@ -88,6 +88,12 @@ public class MovimientoServiceImpl implements MovimientoService {
     }
 
     @Override
+    public MovimientoDTO updateMovimiento(Long id, MovimientoDTO movimientoDTO) {
+        return null;
+    }
+
+
+    @Override
     public void deleteMovimientoById(Long id) {
 
         Movimiento movimientoToDelete = movimientoRepository.findById(id).orElseThrow(()-> {

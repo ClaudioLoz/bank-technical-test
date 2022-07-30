@@ -1,5 +1,6 @@
 package com.banco.bp.controller;
 
+import com.banco.bp.dto.ClienteDTO;
 import com.banco.bp.dto.CuentaDTO;
 import com.banco.bp.dto.MovimientoDTO;
 import com.banco.bp.dto.response.CuentaListDTO;
@@ -25,6 +26,11 @@ public class MovimientoController {
     @PostMapping
     public ResponseEntity<MovimientoDTO>saveMovimiento(@RequestBody MovimientoDTO movimientoDTO){
         return new ResponseEntity<MovimientoDTO>(movimientoService.saveMovimiento(movimientoDTO), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MovimientoDTO>updateMovimiento(@PathVariable Long id, @RequestBody MovimientoDTO movimientoDTO){
+        return new ResponseEntity<MovimientoDTO>(movimientoService.updateMovimiento(id,movimientoDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

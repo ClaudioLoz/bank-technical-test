@@ -63,11 +63,51 @@ public class ClienteServiceImpl implements ClienteService {
         convertedCliente.setEstado(true);
         log.info("Se está guardando el cliente");
 
-        Cliente savedCliente = clienteRepository.save(convertedCliente);
+        return saveAndReturnDTO(convertedCliente);
+    }
+    @Override
+    public ClienteDTO updateCliente(Long id, ClienteDTO clienteDTO) {
+        Cliente convertedCliente = clienteMapper.clienteDTOToCliente(clienteDTO);
+        convertedCliente.setId(id);
+        convertedCliente.setEstado(true);
+        log.info("Se está actualizando al cliente con id {}", id);
+        return saveAndReturnDTO(convertedCliente);
+    }
+
+
+    private ClienteDTO saveAndReturnDTO(Cliente cliente){
+        Cliente savedCliente = clienteRepository.save(cliente);
         ClienteDTO returnDto = clienteMapper.clienteToClienteDTO(savedCliente);
         return returnDto;
     }
 
+    @Override
+    public ClienteDTO patchCliente(Long id, ClienteDTO clienteDTO) {
+        log.info("Se está actualizando al cliente con id {}", id);
+        return clienteRepository.findById(id).map(cliente -> {
+            if(clienteDTO.getIdentificacion()!=null){
+                cliente.setIdentificacion(clienteDTO.getIdentificacion());
+            }
+            if(clienteDTO.getDireccion()!=null){
+                cliente.setDireccion(clienteDTO.getDireccion());
+            }
+            if(clienteDTO.getGenero()!=null){
+                cliente.setGenero(clienteDTO.getGenero());
+            }
+            if(clienteDTO.getNombre()!=null){
+                cliente.setNombre(clienteDTO.getNombre());
+            }
+            if(clienteDTO.getPassword()!=null){
+                cliente.setPassword(clienteDTO.getPassword());
+            }
+            if(clienteDTO.getTelefono()!=null){
+                cliente.setTelefono(clienteDTO.getTelefono());
+            }
+            return clienteMapper.clienteToClienteDTO(clienteRepository.save(cliente));
+        }).orElseThrow(()-> {
+            throw new NoSuchElementException("El cliente con id " + id+ " no existe");
+        });
+    }
     @Override
     public void deleteClienteById(Long id) {
         Cliente cliente  = clienteRepository.findById(id).orElseThrow(()-> {

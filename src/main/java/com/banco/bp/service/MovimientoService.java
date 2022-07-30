@@ -11,5 +11,8 @@ public interface MovimientoService {
 
     MovimientoDTO saveMovimiento(MovimientoDTO movimientoDTO);
 
+    MovimientoDTO updateMovimiento(Long id, MovimientoDTO movimientoDTO);
+
+
     void deleteMovimientoById(Long id);
 }

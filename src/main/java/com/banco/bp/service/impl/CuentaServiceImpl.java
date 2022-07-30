@@ -1,5 +1,6 @@
 package com.banco.bp.service.impl;
 
+import com.banco.bp.dto.ClienteDTO;
 import com.banco.bp.dto.CuentaDTO;
 import com.banco.bp.dto.mapper.CuentaMapper;
 import com.banco.bp.model.Cliente;
@@ -52,17 +53,61 @@ public class CuentaServiceImpl implements CuentaService {
 
     @Override
     public CuentaDTO saveCuenta(CuentaDTO cuentaDTO) {
-        Cuenta cuenta = cuentaMapper.cuentaDTOToCuenta(cuentaDTO);
-        cuenta.setEstado(true);
+        Cuenta convertedCuenta = cuentaMapper.cuentaDTOToCuenta(cuentaDTO);
+        convertedCuenta.setEstado(true);
         Cliente cliente = new Cliente();
         cliente.setId(cuentaDTO.getClienteId());
-        cuenta.setCliente(cliente);
+        convertedCuenta.setCliente(cliente);
         log.info("Se está guardando la cuenta del cliente con ID {}", cuentaDTO.getClienteId());
 
+        return saveAndReturnDTO(convertedCuenta);
+    }
+
+    @Override
+    public CuentaDTO updateCuenta(Long id, CuentaDTO cuentaDTO) {
+        Cuenta convertedCuenta = cuentaMapper.cuentaDTOToCuenta(cuentaDTO);
+        convertedCuenta.setId(id);
+        convertedCuenta.setEstado(true);
+        Cliente cliente = new Cliente();
+        cliente.setId(cuentaDTO.getClienteId());
+        convertedCuenta.setCliente(cliente);
+        log.info("Se está actualizando la cuenta con id {}", id);
+        return saveAndReturnDTO(convertedCuenta);
+    }
+
+
+
+    private CuentaDTO saveAndReturnDTO(Cuenta cuenta){
         Cuenta savedCuenta = cuentaRepository.save(cuenta);
         CuentaDTO returnDto = cuentaMapper.cuentaToCuentaDTO(savedCuenta);
         returnDto.setClienteId(savedCuenta.getCliente().getId());
         return returnDto;
+    }
+    @Override
+    public CuentaDTO patchCuenta(Long id, CuentaDTO cuentaDTO) {
+        log.info("Se está actualizando la cuenta con id {}", id);
+        return cuentaRepository.findById(id).map(cuenta -> {
+            if(cuentaDTO.getNumeroCuenta()!=null){
+                cuenta.setNumeroCuenta(cuentaDTO.getNumeroCuenta());
+            }
+            if(cuentaDTO.getTipoCuenta()!=null){
+                cuenta.setTipoCuenta(cuentaDTO.getTipoCuenta());
+            }
+            if(cuentaDTO.getClienteId()!=null){
+                Cliente cliente  = new Cliente();
+                cliente.setId(cuentaDTO.getClienteId());
+                cuenta.setCliente(cliente);
+            }
+            if(cuentaDTO.getSaldoInicial()!=null){
+                cuenta.setSaldoInicial(cuentaDTO.getSaldoInicial());
+            }
+            Cuenta savedCuenta = cuentaRepository.save(cuenta);
+            CuentaDTO returnDTO = cuentaMapper.cuentaToCuentaDTO(savedCuenta);
+            returnDTO.setClienteId(savedCuenta.getCliente().getId());
+            return returnDTO;
+        }).orElseThrow(()-> {
+            throw new NoSuchElementException("La cuenta con id " + id+ " no existe");
+        });
     }
 
     @Override

@@ -37,6 +37,16 @@ public class ClienteController {
         return new ResponseEntity<ClienteDTO>(clienteService.saveCliente(clienteDTO), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteDTO>updateCliente(@PathVariable Long id,@RequestBody ClienteDTO clienteDTO){
+        return new ResponseEntity<ClienteDTO>(clienteService.updateCliente(id,clienteDTO), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ClienteDTO>patchCliente(@PathVariable Long id,@RequestBody ClienteDTO clienteDTO){
+        return new ResponseEntity<ClienteDTO>(clienteService.patchCliente(id,clienteDTO), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void>deleteClienteById(@PathVariable Long id){
         clienteService.deleteClienteById(id);
